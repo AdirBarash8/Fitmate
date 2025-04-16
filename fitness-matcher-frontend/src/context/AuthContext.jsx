@@ -20,9 +20,15 @@ export const AuthProvider = ({ children }) => {
         });
       } catch (err) {
         console.error("Failed to decode JWT", err);
+  
+        // ✅ Only reset if token is actually invalid
         setUser(null);
-        setToken(null);
         localStorage.removeItem("token");
+  
+        // ❗️Don't loop yourself — check if token is already null
+        if (token !== null) {
+          setToken(null); // triggers re-render only if needed
+        }
       }
     } else {
       setUser(null);

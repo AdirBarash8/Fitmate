@@ -23,11 +23,13 @@ a:hover {
 }
 
 body {
-  margin: 0;
+  background: linear-gradient(to bottom right, #c4f0e0, #e1f4f8);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
 }
 
 h1 {

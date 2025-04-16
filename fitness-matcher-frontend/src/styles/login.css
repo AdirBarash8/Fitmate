@@ -1,0 +1,87 @@
+/* Root background */
+body {
+    background: linear-gradient(to bottom right, #c4f0e0, #e1f4f8);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  /* Glassmorphic card container */
+  .login-container {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Title */
+  .login-container h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #1f2937;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  /* Input fields */
+  .login-container input[type="email"],
+  .login-container input[type="password"] {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #333;
+    font-size: 16px;
+    transition: border 0.3s, box-shadow 0.3s;
+  }
+  
+  .login-container input:focus {
+    border-color: #3ccfcf;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(60, 207, 207, 0.3);
+  }
+  
+  /* Button */
+  .login-container button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(to right, #3ccfcf, #1cc5c5);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .login-container button:hover {
+    background: linear-gradient(to right, #2bbfcf, #14b3b3);
+  }
+  
+  .login-container button:disabled {
+    background-color: #a8b3b8;
+    cursor: not-allowed;
+  }
+  
+  /* Error Message */
+  .error-message {
+    color: #e63946;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
