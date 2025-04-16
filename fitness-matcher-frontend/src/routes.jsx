@@ -44,9 +44,7 @@ function AppRoutes() {
         <Route
           path="/profile"
           element={
-            <ProtectedRoute>
               <ProfilePage />
-            </ProtectedRoute>
           }
         />
         <Route
