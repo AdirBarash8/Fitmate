@@ -1,11 +1,14 @@
 import { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "../utils/axiosInstance";
 import { AuthContext } from "../context/AuthContext";
 import Select from "react-select";
 import ClipLoader from "react-spinners/ClipLoader";
-//asda
+
 const ProfilePage = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -16,7 +19,10 @@ const ProfilePage = () => {
   const goalOptions = ["Weight Loss", "Muscle Gain", "Stress Reduction", "Endurance", "General Health"].map(goal => ({ label: goal, value: goal }));
   const workoutOptions = ["Gym", "Running", "Yoga", "Pilates", "HIIT", "Swimming"].map(w => ({ label: w, value: w }));
 
+  // 🔁 Only run when user is ready
   useEffect(() => {
+    if (!user) return;
+
     axios.get(`/users/${user.user_id}`)
       .then(res => {
         const data = res.data;
@@ -32,7 +38,14 @@ const ProfilePage = () => {
         console.error("Failed to load profile", err);
         setLoading(false);
       });
-  }, [user.user_id]);
+  }, [user]);
+
+  // ⛔ Redirect if not logged in
+  useEffect(() => {
+    if (user === null && !loading) {
+      navigate("/login");
+    }
+  }, [user, loading, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +72,9 @@ const ProfilePage = () => {
     setSaving(false);
   };
 
-  if (loading) return <div className="center"><ClipLoader /></div>;
+  if (loading || !formData) {
+    return <div className="center"><ClipLoader size={50} /></div>;
+  }
 
   return (
     <div className="profile-form-container">

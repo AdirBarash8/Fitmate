@@ -1,5 +1,6 @@
 const { addUser } = require('../services/userService');
 const { clearCachedMatches } = require('../services/matchCacheService');
+const User = require('../models/user');
 
 exports.createUser = async (req, res) => {
   try {
@@ -54,3 +55,19 @@ exports.updateUser = async (req, res) => {
   }
 };
 
+exports.getUserById = async (req, res) => {
+  const userId = Number(req.params.user_id);
+
+  if (req.user.user_id !== userId && !req.user.isAdmin) {
+    return res.status(403).json({ error: 'Access denied' });
+  }
+
+  try {
+    const user = await User.findOne({ user_id: userId }).select('-password -_id');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
+};
