@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "../utils/axiosInstance";
-import AuthContext from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
 const ProfilePage = () => {
   const { user } = useContext(AuthContext); // contains user_id, token

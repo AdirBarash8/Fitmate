@@ -4,16 +4,26 @@ const instance = axios.create({
   baseURL: "http://localhost:3000/api",
 });
 
-// Optional: set default headers dynamically based on token
-instance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token"); // or use context if preferred
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+// 🔐 Attach token from localStorage
+instance.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// 🔐 Global 401 handler (auto logout)
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear token + refresh or redirect to login
+      localStorage.removeItem("token");
+      window.location.href = "/login";
     }
-    return config;
-  },
-  (error) => Promise.reject(error)
+    return Promise.reject(error);
+  }
 );
 
 export default instance;
