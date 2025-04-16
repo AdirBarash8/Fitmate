@@ -39,9 +39,10 @@ def match_users():
             return jsonify({"error": "User not found"}), 404
 
         # Only fetch potential match candidates based on preferences
-        all_users = get_filtered_users_for_matching(current_user)
-        matches = find_hybrid_matches(user_id, all_users, top_n=top_n)
-
+        filtered_others = get_filtered_users_for_matching(current_user)
+        all_users = [current_user] + filtered_others  # 👈 Add user to list
+        matches = find_hybrid_matches(user_id, all_users)
+        
         user_dict = {user["user_id"]: user for user in all_users}
         enriched = []
         ranked_overview = []

@@ -2,8 +2,11 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../utils/axiosInstance";
 import { AuthContext } from "../context/AuthContext";
-import Select from "react-select";
 import ClipLoader from "react-spinners/ClipLoader";
+import '../styles/profile.css';
+import CheckboxDropdown from "../components/CheckboxDropdown";
+
+
 
 const ProfilePage = () => {
   const { user } = useContext(AuthContext);
@@ -105,28 +108,25 @@ const ProfilePage = () => {
           <option value="Fixed">Fixed</option>
         </select>
 
-        <label>Available Days:</label>
-        <Select
-          isMulti
-          options={daysOptions}
-          value={formData.Available_Days?.map(d => ({ label: d, value: d }))}
-          onChange={(selected) => handleSelectChange("Available_Days", selected)}
+        <CheckboxDropdown
+          label="Available Days"
+          options={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
+          selectedValues={formData.Available_Days}
+          onChange={(val) => setFormData(prev => ({ ...prev, Available_Days: val }))}
         />
 
-        <label>Fitness Goals:</label>
-        <Select
-          isMulti
-          options={goalOptions}
-          value={formData.Fitness_Goal?.map(g => ({ label: g, value: g }))}
-          onChange={(selected) => handleSelectChange("Fitness_Goal", selected)}
+        <CheckboxDropdown
+          label="Fitness Goals"
+          options={["Weight Loss", "Muscle Gain", "Stress Reduction", "Endurance", "General Health"]}
+          selectedValues={formData.Fitness_Goal}
+          onChange={(val) => setFormData(prev => ({ ...prev, Fitness_Goal: val }))}
         />
 
-        <label>Workout Type:</label>
-        <Select
-          isMulti
-          options={workoutOptions}
-          value={formData.Workout_Type?.map(w => ({ label: w, value: w }))}
-          onChange={(selected) => handleSelectChange("Workout_Type", selected)}
+        <CheckboxDropdown
+          label="Workout Types"
+          options={["Gym", "Running", "Yoga", "Pilates", "HIIT", "Swimming"]}
+          selectedValues={formData.Workout_Type}
+          onChange={(val) => setFormData(prev => ({ ...prev, Workout_Type: val }))}
         />
 
         <button type="submit" disabled={saving}>

@@ -23,17 +23,26 @@ def get_filtered_users_for_matching(current_user):
     }
 
     # ✅ Filter by preferred partner gender
-    gender_pref = current_user.get("Preferred_Partner_Gender", [])
+    gender_pref = current_user.get("Preferred_Partner_Gender")
+    if not isinstance(gender_pref, list):
+        gender_pref = []
+
     if "No Preference" not in gender_pref:
         query["Gender"] = {"$in": gender_pref}
 
     # ✅ Filter by preferred partner age range
-    age_ranges = current_user.get("Preferred_Partner_Age_Range", [])
+    age_ranges = current_user.get("Preferred_Partner_Age_Range")
+    if not isinstance(age_ranges, list):
+        age_ranges = []
+
     age_bounds = []
     for r in age_ranges:
         if "-" in r:
-            min_age, max_age = map(int, r.split("-"))
-            age_bounds.append((min_age, max_age))
+            try:
+                min_age, max_age = map(int, r.split("-"))
+                age_bounds.append((min_age, max_age))
+            except:
+                pass
 
     if age_bounds:
         min_age = min(r[0] for r in age_bounds)
@@ -41,8 +50,8 @@ def get_filtered_users_for_matching(current_user):
         query["Age"] = {"$gte": min_age, "$lte": max_age}
 
     # ✅ Filter by Workout_Type overlap
-    workout_types = current_user.get("Workout_Type", [])
-    if workout_types:
+    workout_types = current_user.get("Workout_Type")
+    if isinstance(workout_types, list) and workout_types:
         query["Workout_Type"] = {"$in": workout_types}
 
     return list(users_collection.find(query, {"_id": 0}))

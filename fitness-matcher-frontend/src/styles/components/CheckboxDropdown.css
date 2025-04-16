@@ -1,0 +1,20 @@
+.checkbox-dropdown {
+    margin: 1rem 0;
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    border: 1px solid #ccc;
+    padding: 8px;
+    position: absolute;
+    background-color: white;
+    z-index: 1;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.dropdown-content.show {
+    display: block;
+}

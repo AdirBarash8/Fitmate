@@ -1,6 +1,6 @@
 const axios = require('axios');
 const Match = require('../models/match');
-
+ 
 /**
  * Calls the Python match service and returns the result.
  */
@@ -18,7 +18,7 @@ async function getMatchesFromPython(userId, topN = 10) {
     throw err;
   }
 }
-
+ 
 /**
  * Stores or updates the top matches for a user.
  * Overwrites previous matches and sets a new timestamp.
@@ -39,9 +39,9 @@ async function storeMatchesForUser(userId, matches) {
       upsert: true
     }
   }));
-
+ 
   await Match.bulkWrite(bulkOps);
-
+ 
   // Optional: clean up stale matches not in current top-N
   const matchedUserIds = matches.map(m => m.user_id);
   await Match.deleteMany({
@@ -49,7 +49,7 @@ async function storeMatchesForUser(userId, matches) {
     user_id_2: { $nin: matchedUserIds }
   });
 }
-
+ 
 module.exports = {
   getMatchesFromPython,
   storeMatchesForUser
