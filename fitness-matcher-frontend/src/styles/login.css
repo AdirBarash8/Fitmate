@@ -12,8 +12,8 @@ body {
   /* Glassmorphic card container */
   .login-container {
     width: 100%;
-    max-width: 400px;
-    background: rgba(255, 255, 255, 0.55);
+    max-width: 500px;
+    background: #f5f7fa;
     backdrop-filter: blur(15px);
     border-radius: 20px;
     padding: 40px;

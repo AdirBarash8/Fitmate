@@ -4,7 +4,6 @@ const instance = axios.create({
   baseURL: "http://localhost:3000/api",
 });
 
-// 🔐 Attach token from localStorage
 instance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -13,15 +12,17 @@ instance.interceptors.request.use((config) => {
   return config;
 });
 
-// 🔐 Global 401 handler (auto logout)
 instance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Clear token + refresh or redirect to login
+    const isLoginRequest = error.config?.url?.includes("/auth/login");
+    const token = localStorage.getItem("token");
+
+    if (error.response?.status === 401 && token && !isLoginRequest) {
       localStorage.removeItem("token");
-      window.location.href = "/login";
+      window.location.href = "/"; // Or use a context-aware logout for no-refresh
     }
+
     return Promise.reject(error);
   }
 );

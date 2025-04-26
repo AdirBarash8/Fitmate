@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import MatchPage from "./pages/MatchPage";
@@ -10,9 +11,11 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function AppRoutes() {
   return (
+    <AuthProvider>
     <Router>
       <Routes>
         {/* Public Routes */}
+        <Route path="/" element={<LoginPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
@@ -57,6 +60,7 @@ function AppRoutes() {
         />
       </Routes>
     </Router>
+    </AuthProvider>
   );
 }
 

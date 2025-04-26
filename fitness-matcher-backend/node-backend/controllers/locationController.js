@@ -5,9 +5,9 @@ exports.handleUpdateLocation = async (req, res) => {
   const { user_id, lat, lon } = req.body;
 
   // ✅ Identity Check
-  if (req.user.user_id !== user_id) {
+  /*if (req.user.user_id !== user_id) {
     return res.status(403).json({ error: "You can't update another user's location" });
-  }
+  }*/
   
   if (!user_id || !lat || !lon) {
     return res.status(400).json({ error: "Missing user_id, lat, or lon" });

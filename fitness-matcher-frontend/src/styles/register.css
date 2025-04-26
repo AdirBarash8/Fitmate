@@ -1,0 +1,96 @@
+/* styles/register.css */
+
+.register-page,
+.profile-setup-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  min-width: 40vh;
+  background-color: #f5f7fa;
+  padding: 2rem;
+}
+
+.register-container,
+.profile-setup-container {
+  background-color: white;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  max-width: 420px;
+  width: 100%;
+}
+
+.register-container h2,
+.profile-setup-container h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #333;
+}
+
+/* Scoped form styles */
+.register-page form,
+.profile-setup-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.register-page input,
+.profile-setup-page input,
+.register-page select,
+.profile-setup-page select {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border 0.2s ease;
+}
+
+.register-page input:focus,
+.profile-setup-page input:focus,
+.register-page select:focus,
+.profile-setup-page select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.register-page button,
+.profile-setup-page button {
+  background-color: #007bff;
+  color: white;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.register-page button:hover,
+.profile-setup-page button:hover {
+  background-color: #0056b3;
+}
+
+.register-page .error-message,
+.profile-setup-page .error-message {
+  color: red;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.register-page a,
+.profile-setup-page a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.register-page a:hover,
+.profile-setup-page a:hover {
+  text-decoration: underline;
+}
+
+.register-page p,
+.profile-setup-page p {
+  text-align: center;
+}

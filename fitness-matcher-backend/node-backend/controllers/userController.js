@@ -2,6 +2,18 @@ const { addUser } = require('../services/userService');
 const { clearCachedMatches } = require('../services/matchCacheService');
 const User = require('../models/user');
  
+exports.getMyProfile = async (req, res) => {
+  try {
+    const myUserId = req.user.user_id; // נשלף מהטוקן
+    const user = await User.findOne({ user_id: myUserId }).select('-password -_id');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch your profile' });
+  }
+};
+
 exports.createUser = async (req, res) => {
   try {
     const userData = req.body;

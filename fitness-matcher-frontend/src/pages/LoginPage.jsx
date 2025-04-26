@@ -6,7 +6,7 @@ import { FiLoader } from "react-icons/fi";
 import "../styles/login.css";
 
 const LoginPage = () => {
-  const { setToken, setUser } = useContext(AuthContext);
+  const { setToken } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -14,7 +14,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("LoginPage mounted");
+    console.log("🟢 LoginPage mounted");
   }, []);
 
   const validateInputs = () => {
@@ -32,35 +32,37 @@ const LoginPage = () => {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // ✅ Prevent native reload
-    console.log("✋ prevented default");
+    e.preventDefault();
     setError(null);
-
+  
     const validationError = validateInputs();
     if (validationError) {
       setError(validationError);
       return;
     }
-
+  
     setIsLoading(true);
-
+  
     try {
       const res = await axios.post("/auth/login", {
         email,
         password,
       });
-
-      setToken(res.data.token);
-      setUser({ user_id: res.data.user_id });
-
+  
+      setToken(res.data.token); // Triggers context decoding
       navigate("/match");
     } catch (err) {
-      setError(err.response?.data?.error || "Login failed. Please try again.");
-      console.trace(); // 🔍 Shows who triggered rerender if it still happens
+      const message = err.response?.data?.error || "Login failed. Please try again.";
+  
+      setError(message);
+  
+      // Optional: log for dev
+      console.log("Login error:", err.response?.status, message);
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="login-page">
@@ -81,7 +83,19 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          {error && <div className="error-message">{error}</div>}
+          {error && (
+            <div className="error-message">
+              {error}
+              {error.toLowerCase().includes("user") && (
+                <p>
+                  Don't have an account?{" "}
+                  <a href="/register" style={{ color: "blue" }}>
+                    Register here
+                  </a>
+                </p>
+              )}
+            </div>
+          )}
           <button type="submit" disabled={isLoading}>
             {isLoading ? (
               <>
