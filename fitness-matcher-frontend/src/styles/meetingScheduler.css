@@ -1,0 +1,52 @@
+.meeting-scheduler-container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #f7f9fc;
+    border-radius: 8px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.meeting-scheduler-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.meeting-scheduler-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.meeting-scheduler-container label {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.meeting-scheduler-container select,
+.meeting-scheduler-container input {
+    margin-top: 5px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.meeting-scheduler-container button {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #2d89ef;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.meeting-scheduler-container button:hover {
+    background-color: #2466c0;
+}
+
+.success-msg {
+    margin-top: 15px;
+    color: green;
+    font-weight: bold;
+    text-align: center;
+}
