@@ -1,11 +1,12 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../utils/axiosInstance";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/meetingScheduler.css";
 
 const MeetingSchedulerPage = () => {
-  const { partnerId } = useParams(); // partner id from URL
+  const { state } = useLocation();
+  const partnerId = state?.partnerId;
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 

@@ -3,7 +3,7 @@ const { getCachedMatches, setCachedMatches } = require('../services/matchCacheSe
 const Match = require('../models/match');
  
 exports.getMatchResults = async (req, res) => {
-  const userId = Number(req.query.user_id);
+  const userId = req.user.user_id;
   const topN = Number(req.query.top_n || 10);
  
   // ✅ Identity Check

@@ -1,0 +1,126 @@
+/* רקע עמוד */
+.match-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #e0f2ff, #cce7ff);
+    padding: 1.5rem;
+  }
+  
+  /* טקסט טעינה */
+  .loading-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #3b4a59;
+  }
+  
+  /* טקסט אין התאמות */
+  .no-matches-text {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  
+  /* אזור הכרטיס */
+  .card-container {
+    position: relative;
+    width: 20rem;
+    height: 24rem;
+    margin-bottom: 2rem;
+  }
+  
+  /* עיצוב כרטיס */
+  .match-card {
+    width: 100%;
+    height: 100%;
+    background: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    color: #334155; /* אפור כהה */
+    overflow: hidden;
+  }
+  
+  /* טקסט בכרטיס */
+  .match-card h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+  }
+  
+  .match-card p {
+    font-size: 1.25rem;
+  }
+  
+  /* אינדיקציות לייק/דלג */
+  .swipe-indicator {
+    position: absolute;
+    top: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: pulse 1s infinite;
+  }
+  
+  .swipe-indicator.like {
+    left: 1rem;
+    background: #60a5fa; /* כחול בהיר */
+    color: white;
+  }
+  
+  .swipe-indicator.nope {
+    right: 1rem;
+    background: #93c5fd; /* תכלת */
+    color: white;
+  }
+  
+  /* אזור כפתורים */
+  .buttons-container {
+    display: flex;
+    gap: 2.5rem;
+  }
+  
+  /* עיצוב כפתורים */
+  .action-button {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    background: linear-gradient(to bottom, #60a5fa, #3b82f6);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, background 0.3s;
+  }
+  
+  .action-button:hover {
+    transform: scale(1.1);
+    background: linear-gradient(to bottom, #3b82f6, #2563eb);
+  }
+  
+  /* כפתורי לייק ודלג */
+  .like-button {
+    background: linear-gradient(to bottom, #60a5fa, #3b82f6);
+  }
+  
+  .nope-button {
+    background: linear-gradient(to bottom, #93c5fd, #60a5fa);
+  }
+  
+  /* אפקט רטט */
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
