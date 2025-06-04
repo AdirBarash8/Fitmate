@@ -50,7 +50,7 @@ const LoginPage = () => {
       });
   
       setToken(res.data.token); // Triggers context decoding
-      navigate("/match");
+      navigate("/dashboard");
     } catch (err) {
       const message = err.response?.data?.error || "Login failed. Please try again.";
   

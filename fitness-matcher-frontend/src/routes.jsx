@@ -8,6 +8,7 @@ import ScheduleMeetingPage from "./pages/ScheduleMeetingPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminPanel from "./pages/AdminPanel";
 import ProtectedRoute from "./components/ProtectedRoute";
+import DashboardPage from "./pages/DashboardPage";
 
 function AppRoutes() {
   return (
@@ -20,6 +21,14 @@ function AppRoutes() {
         <Route path="/register" element={<RegisterPage />} />
 
         {/* Protected Routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/match"
           element={
