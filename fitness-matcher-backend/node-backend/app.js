@@ -6,6 +6,8 @@ const userRoutes = require('./routes/userRoutes');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
 const meetingRoutes = require('./routes/meetingRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
+const exerciseRoutes = require('./routes/exerciseRoutes');
 
 require('dotenv').config();
 
@@ -35,7 +37,8 @@ app.use('/api', locationRoutes);
 app.use('/api', userRoutes);
 app.use('/api', authRoutes);
 app.use('/api', meetingRoutes);
-
+app.use('/api', dashboardRoutes);
+app.use('/api', exerciseRoutes);
 
 // Start server
 const PORT = process.env.PORT || 3000;

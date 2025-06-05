@@ -9,6 +9,7 @@ import ProfilePage from "./pages/ProfilePage";
 import AdminPanel from "./pages/AdminPanel";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardPage from "./pages/DashboardPage";
+import AddExercisePage from "./pages/AddExercisePage";
 
 function AppRoutes() {
   return (
@@ -64,6 +65,14 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <AdminPanel />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/exercises/new"
+          element={
+            <ProtectedRoute>
+              <AddExercisePage />
             </ProtectedRoute>
           }
         />
