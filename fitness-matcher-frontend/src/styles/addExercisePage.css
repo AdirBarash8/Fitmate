@@ -1,0 +1,51 @@
+.add-exercise-page {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #f0f4ff;
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.add-exercise-page h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.exercise-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.exercise-form input,
+.exercise-form textarea {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.exercise-form button {
+  padding: 0.75rem;
+  background: #3b82f6;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.exercise-form button:hover {
+  background: #2563eb;
+}
+
+.success {
+  color: green;
+  text-align: center;
+}
+
+.error {
+  color: red;
+  text-align: center;
+}
