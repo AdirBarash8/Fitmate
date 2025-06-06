@@ -2,6 +2,8 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import axios from "../utils/axiosInstance";
 import { AuthContext } from "../context/AuthContext";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "../styles/meetingScheduler.css";
 
 const MeetingSchedulerPage = () => {
@@ -14,15 +16,17 @@ const MeetingSchedulerPage = () => {
 
   const [partner, setPartner] = useState(null);
   const [commonDays, setCommonDays] = useState([]);
-  const [formData, setFormData] = useState({
-    day: "",
-    timeSlot: "",
-    location: ""
-  });
+  const [existingMeetings, setExistingMeetings] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [location, setLocation] = useState("");
   const [success, setSuccess] = useState(false);
 
+  const dayToNum = {
+    Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6,
+  };
+
   useEffect(() => {
-    async function fetchPartnerData() {
+    async function fetchData() {
       if (!partnerId) {
         console.warn("Missing partner ID. Redirecting to match page.");
         navigate("/match");
@@ -30,40 +34,70 @@ const MeetingSchedulerPage = () => {
       }
 
       try {
-        const res = await axios.get(`/users/${partnerId}`);
-        setPartner(res.data);
-        console.log("Logged-in user object:", user);
+        const [partnerRes, userMeetingsRes] = await Promise.all([
+          axios.get(`/users/${partnerId}`),
+          axios.get(`/meetings?user_id=${user.user_id}`),
+        ]);
+
+        const partnerData = partnerRes.data;
+        setPartner(partnerData);
+
         const myDays = user?.Available_Days || [];
-        const partnerDays = res.data.Available_Days || [];
-        const overlap = myDays.filter(day => partnerDays.includes(day));
-        console.log("My Available Days:", myDays);
-        console.log("Partner Available Days:", partnerDays);
-        console.log("Overlap:", overlap);
+        const theirDays = partnerData?.Available_Days || [];
+        const overlap = myDays.filter((day) => theirDays.includes(day));
         setCommonDays(overlap);
+
+        setExistingMeetings(userMeetingsRes.data?.meetings || []);
       } catch (err) {
-        console.error("❌ Failed to fetch partner data:", err);
+        console.error("❌ Failed to fetch meeting/partner info:", err);
       }
     }
 
-    fetchPartnerData();
+    fetchData();
   }, [partnerId, user, navigate]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const isDateAllowed = (date) => {
+    const now = new Date();
+    if (date < now) return false; // disallow past dates
+
+    const dayNum = date.getDay(); // 0 (Sun) - 6 (Sat)
+    const allowedDays = commonDays.map((d) => dayToNum[d]);
+    if (!allowedDays.includes(dayNum)) return false;
+
+    const selectedStart = new Date(date);
+    const selectedEnd = new Date(date.getTime() + 30 * 60000); // 30min slot
+
+    for (const meeting of existingMeetings) {
+      const start = new Date(meeting.datetime);
+      const end = new Date(start.getTime() + 30 * 60000);
+
+      const overlap =
+        selectedStart < end && selectedEnd > start;
+
+      if (overlap) return false;
+    }
+
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!selectedDate || !location) {
+      alert("Please select a valid date and location.");
+      return;
+    }
+
     try {
-      await axios.post("/meetings", {
-        user_id_1: user.user_id,
-        user_id_2: Number(partnerId),
-        day: formData.day,
-        time_slot: formData.timeSlot,
-        location: formData.location,
+      const payload = {
+        user_1: user.user_id,
+        user_2: Number(partnerId),
+        datetime: selectedDate.toISOString(),
+        location,
         status: "Pending"
-      });
+      };
+
+      await axios.post("/meetings", payload);
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
@@ -88,28 +122,23 @@ const MeetingSchedulerPage = () => {
         </p>
       ) : (
         <form onSubmit={handleSubmit}>
-          <label>Select Common Available Day:</label>
-          <select name="day" value={formData.day} onChange={handleChange} required>
-            <option value="">-- Select Day --</option>
-            {commonDays.map(day => (
-              <option key={day} value={day}>{day}</option>
-            ))}
-          </select>
-
-          <label>Select Time:</label>
-          <select name="timeSlot" value={formData.timeSlot} onChange={handleChange} required>
-            <option value="">-- Select Time --</option>
-            <option value="Morning">Morning (8:00–11:00)</option>
-            <option value="Afternoon">Afternoon (12:00–16:00)</option>
-            <option value="Evening">Evening (17:00–20:00)</option>
-          </select>
+          <label>Select Date & Time:</label>
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            filterDate={isDateAllowed}
+            showTimeSelect
+            timeIntervals={30}
+            dateFormat="MMMM d, yyyy h:mm aa"
+            placeholderText="Pick a date & time"
+            required
+          />
 
           <label>Meeting Location:</label>
           <input
             type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
             placeholder="Enter meeting location"
             required
           />
@@ -118,7 +147,11 @@ const MeetingSchedulerPage = () => {
         </form>
       )}
 
-      {success && <p className="success-msg">✅ Meeting Scheduled! Waiting for partner confirmation.</p>}
+      {success && (
+        <p className="success-msg">
+          ✅ Meeting Scheduled! Waiting for partner confirmation.
+        </p>
+      )}
     </div>
   );
 };

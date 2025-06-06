@@ -60,4 +60,19 @@ exports.getStoredMatches = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Failed to retrieve matches', details: err.message });
   }
+}
+
+exports.getMatchesByUser = async (req, res) => {
+  try {
+    const { user_id } = req.query;
+    const matches = await Match.find({
+      $or: [{ user_id_1: user_id }, { user_id_2: user_id }]
+    }).sort({ last_updated: -1 });
+
+    res.json({ matches });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
+
+  

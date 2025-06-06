@@ -11,7 +11,7 @@ const DashboardPage = () => {
   const [stats, setStats] = useState({
     matchesThisWeek: 0,
     avgWorkoutTime: "0m",
-    caloriesBurned: 0
+    caloriesBurned: 0,
   });
 
   useEffect(() => {
@@ -51,30 +51,29 @@ const DashboardPage = () => {
         </div>
       </div>
 
-    <div className="dashboard-buttons">
-      <button className="dashboard-button" onClick={() => handleNavigate("/match")}>
-        🔍 Match
-      </button>
-      <button className="dashboard-button" onClick={() => handleNavigate("/profile")}>
-        👤 Profile
-      </button>
-      <button className="dashboard-button" onClick={() => handleNavigate("/meetings")}>
-        📅 Meetings
-      </button>
-      <button className="dashboard-button" onClick={() => handleNavigate("/meetings/new")}>
-        ➕ Schedule
-      </button>
-      <button className="dashboard-button" onClick={() => handleNavigate("/update-location")}>
-        📍 Location
-      </button>
-      <button className="dashboard-button" onClick={() => handleNavigate("/exercises/new")}>
-        🏃‍♀️ Add Exercise
-      </button>
-      <button className="dashboard-button logout" onClick={logout}>
-        🚪 Logout
-      </button>
-    </div>
-
+      <div className="dashboard-buttons">
+        <button className="dashboard-button" onClick={() => handleNavigate("/match")}>
+          🔍 Match
+        </button>
+        <button className="dashboard-button" onClick={() => handleNavigate("/matches")}>
+          🤝 Your Matches
+        </button>
+        <button className="dashboard-button" onClick={() => handleNavigate("/meetings")}>
+          📅 Meetings
+        </button>
+        <button className="dashboard-button" onClick={() => handleNavigate("/profile")}>
+          👤 Profile
+        </button>
+        <button className="dashboard-button" onClick={() => handleNavigate("/update-location")}>
+          📍 Location
+        </button>
+        <button className="dashboard-button" onClick={() => handleNavigate("/exercises/new")}>
+          🏃‍♀️ Add Exercise
+        </button>
+        <button className="dashboard-button logout" onClick={logout}>
+          🚪 Logout
+        </button>
+      </div>
     </div>
   );
 };
