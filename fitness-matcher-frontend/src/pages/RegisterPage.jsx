@@ -9,6 +9,7 @@ const RegisterPage = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
+    name: "",
     email: "",
     password: "",
     age: "",
@@ -23,6 +24,9 @@ const RegisterPage = () => {
   };
 
   const validateInputs = () => {
+    if (!form.name || form.name.trim().length < 3) {
+      return "Name must be at least 3 characters.";
+    }
     if (!form.email || !form.password) {
       return "Email and password are required.";
     }
@@ -47,8 +51,11 @@ const RegisterPage = () => {
     try {
       // Register
       await axios.post("/auth/register", {
+        name: form.name.trim(),
         email: form.email,
         password: form.password,
+        Age: form.age ? Number(form.age) : undefined,
+        Gender: form.gender || undefined,
       });
 
       // Login immediately
@@ -83,6 +90,14 @@ const RegisterPage = () => {
       <div className="register-container">
         <h2>Create Account</h2>
         <form onSubmit={handleRegister}>
+          <input
+            name="name"
+            type="text"
+            placeholder="Nickname (min 3 chars)"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
           <input
             name="email"
             type="email"

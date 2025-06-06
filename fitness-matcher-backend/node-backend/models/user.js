@@ -5,6 +5,11 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   isAdmin: { type: Boolean, default: false },
   user_id: { type: Number, unique: true, required: true },
+  name: { 
+    type: String, 
+    required: [true, 'Name is required'], 
+    minlength: [3, 'Name must be at least 3 characters'] 
+  },
   Age: Number,
   Gender: String,
   Travel_Willingness_km: Number,
