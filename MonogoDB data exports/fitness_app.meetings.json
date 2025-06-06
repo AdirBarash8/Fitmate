@@ -1,0 +1,76 @@
+[{
+  "_id": {
+    "$oid": "6842ce11821af597c17d0f59"
+  },
+  "user_1": 357,
+  "user_2": 225,
+  "datetime": {
+    "$date": "2025-06-10T14:30:00.000Z"
+  },
+  "location": "ne location11",
+  "status": "Confirmed",
+  "createdAt": {
+    "$date": "2025-06-06T11:16:33.375Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-06T11:34:10.872Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6842cfe0821af597c17d0f64"
+  },
+  "user_1": 357,
+  "user_2": 1020,
+  "datetime": {
+    "$date": "2025-06-15T10:30:00.000Z"
+  },
+  "location": "asdas",
+  "status": "Pending",
+  "createdAt": {
+    "$date": "2025-06-06T11:24:16.683Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-06T11:24:16.683Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6842dc7fb6542ce5165d6c4c"
+  },
+  "user_1": 357,
+  "user_2": 225,
+  "datetime": {
+    "$date": "2025-06-19T15:21:00.000Z"
+  },
+  "location": "zxcsa",
+  "status": "Declined",
+  "createdAt": {
+    "$date": "2025-06-06T12:18:07.387Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-06T12:31:59.621Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6842df7cb6542ce5165d6c74"
+  },
+  "user_1": 357,
+  "user_2": 225,
+  "datetime": {
+    "$date": "2025-06-10T12:00:00.000Z"
+  },
+  "location": "werw",
+  "status": "Confirmed",
+  "createdAt": {
+    "$date": "2025-06-06T12:30:52.972Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-06T12:31:58.700Z"
+  },
+  "__v": 0
+}]
