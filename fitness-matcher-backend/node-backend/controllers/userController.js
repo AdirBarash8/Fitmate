@@ -68,18 +68,37 @@ exports.updateUser = async (req, res) => {
 };
  
 exports.getUserById = async (req, res) => {
-  const userId = Number(req.params.user_id);
- 
-  if (req.user.user_id !== userId && !req.user.isAdmin) {
-    return res.status(403).json({ error: 'Access denied' });
-  }
- 
+  const requestedId = Number(req.params.user_id);
+  const isSelf = req.user.user_id === requestedId;
+  const isAdmin = req.user.isAdmin === true;
+
   try {
-    const user = await User.findOne({ user_id: userId }).select('-password -_id');
+    const user = await User.findOne({ user_id: requestedId });
+
     if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json(user);
+
+    if (isSelf || isAdmin) {
+      // Return full profile (excluding sensitive fields)
+      const fullProfile = user.toObject();
+      delete fullProfile.password;
+      delete fullProfile._id;
+      return res.json(fullProfile);
+    } else {
+      // Return limited public info for scheduling purposes
+      const publicProfile = {
+        user_id: user.user_id,
+        Gender: user.Gender,
+        Available_Days: user.Available_Days,
+        Motivation_Level: user.Motivation_Level,
+        Time_Flexibility: user.Time_Flexibility,
+        Fitness_Goal: user.Fitness_Goal,
+        Workout_Type: user.Workout_Type,
+        Age: user.Age,
+      };
+      return res.json(publicProfile);
+    }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to fetch user' });
+    return res.status(500).json({ error: 'Failed to fetch user' });
   }
 };

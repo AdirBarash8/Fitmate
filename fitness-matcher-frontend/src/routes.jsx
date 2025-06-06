@@ -47,7 +47,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/meetings/new"
+          path="/meetings/new/:partnerId"
           element={
             <ProtectedRoute>
               <ScheduleMeetingPage />

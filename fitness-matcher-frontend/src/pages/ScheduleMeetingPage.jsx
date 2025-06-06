@@ -1,12 +1,14 @@
 import { useState, useEffect, useContext } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import axios from "../utils/axiosInstance";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/meetingScheduler.css";
 
 const MeetingSchedulerPage = () => {
+  const { partnerId: paramPartnerId } = useParams();
   const { state } = useLocation();
-  const partnerId = state?.partnerId;
+  const partnerId = paramPartnerId || state?.partnerId;
+
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -21,21 +23,30 @@ const MeetingSchedulerPage = () => {
 
   useEffect(() => {
     async function fetchPartnerData() {
+      if (!partnerId) {
+        console.warn("Missing partner ID. Redirecting to match page.");
+        navigate("/match");
+        return;
+      }
+
       try {
         const res = await axios.get(`/users/${partnerId}`);
         setPartner(res.data);
-
-        // Calculate overlapping available days
+        console.log("Logged-in user object:", user);
         const myDays = user?.Available_Days || [];
         const partnerDays = res.data.Available_Days || [];
         const overlap = myDays.filter(day => partnerDays.includes(day));
+        console.log("My Available Days:", myDays);
+        console.log("Partner Available Days:", partnerDays);
+        console.log("Overlap:", overlap);
         setCommonDays(overlap);
       } catch (err) {
-        console.error("Failed to fetch partner data:", err);
+        console.error("❌ Failed to fetch partner data:", err);
       }
     }
+
     fetchPartnerData();
-  }, [partnerId, user]);
+  }, [partnerId, user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,20 +62,20 @@ const MeetingSchedulerPage = () => {
         day: formData.day,
         time_slot: formData.timeSlot,
         location: formData.location,
-        status: "Pending" // pending approval
+        status: "Pending"
       });
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
-        navigate("/meetings"); // go to meetings page (or wherever you want)
+        navigate("/meetings");
       }, 2000);
     } catch (err) {
-      console.error("Failed to schedule meeting:", err);
+      console.error("❌ Failed to schedule meeting:", err);
     }
   };
 
   if (!partner) {
-    return <div className="center">Loading...</div>;
+    return <div className="center">Loading partner information...</div>;
   }
 
   return (
@@ -72,7 +83,9 @@ const MeetingSchedulerPage = () => {
       <h2>📅 Schedule a Meeting with {partner?.Gender} #{partnerId}</h2>
 
       {commonDays.length === 0 ? (
-        <p style={{ color: "red" }}>❗ No common available days found. Please contact your partner.</p>
+        <p style={{ color: "red" }}>
+          ❗ No common available days found. Please contact your partner.
+        </p>
       ) : (
         <form onSubmit={handleSubmit}>
           <label>Select Common Available Day:</label>
@@ -86,9 +99,9 @@ const MeetingSchedulerPage = () => {
           <label>Select Time:</label>
           <select name="timeSlot" value={formData.timeSlot} onChange={handleChange} required>
             <option value="">-- Select Time --</option>
-            <option value="Morning">Morning (8:00-11:00)</option>
-            <option value="Afternoon">Afternoon (12:00-16:00)</option>
-            <option value="Evening">Evening (17:00-20:00)</option>
+            <option value="Morning">Morning (8:00–11:00)</option>
+            <option value="Afternoon">Afternoon (12:00–16:00)</option>
+            <option value="Evening">Evening (17:00–20:00)</option>
           </select>
 
           <label>Meeting Location:</label>

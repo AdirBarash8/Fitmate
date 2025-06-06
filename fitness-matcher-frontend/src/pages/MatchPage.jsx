@@ -40,7 +40,7 @@ function MatchPage() {
   const handleSwipe = (direction, match) => {
     console.log(`You swiped ${direction} on user ${match.user_id}`);
     if (direction === "right") {
-      navigate("/meetings/new", { state: { partnerId: match.user_id } });
+      navigate(`/meetings/new/${match.user_id}`);
     } else {
       setSwipeDirection(direction);
       setTimeout(() => {

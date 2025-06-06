@@ -16,6 +16,8 @@ export const AuthProvider = ({ children }) => {
           user_id: decoded.user_id,
           email: decoded.email,
           isAdmin: decoded.isAdmin,
+          Available_Days: decoded.Available_Days || [],
+
         });
       } catch (err) {
         console.error("Failed to decode JWT", err);
