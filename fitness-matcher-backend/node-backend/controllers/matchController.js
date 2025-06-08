@@ -118,14 +118,18 @@ exports.markAsLiked = async (req, res) => {
   try {
     const result = await Match.updateOne(
       { user_id_1, user_id_2 },
-      { $set: { liked, last_updated: new Date() } }
+      {
+        $set: {
+          liked,
+          last_updated: new Date(),
+        },
+      },
+      { upsert: true } // 🔁 insert if not exists
     );
 
-    if (result.matchedCount === 0) {
-      return res.status(404).json({ error: "Match not found" });
-    }
-
-    res.json({ message: `Match marked as ${liked ? 'liked' : 'not liked'} ✅` });
+    res.json({
+      message: `Match ${liked ? 'liked 👍' : 'disliked 👎'} and saved`,
+    });
   } catch (err) {
     console.error("Error updating like status:", err.message);
     res.status(500).json({ error: "Failed to update like status" });
