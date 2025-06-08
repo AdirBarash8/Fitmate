@@ -12,10 +12,27 @@ const MatchesPage = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const res = await axios.get(`/matches?user_id=${user.user_id}`);
-        setMatches(res.data.matches || []);
+        const res = await axios.get("/match", {
+          params: { user_id: user.user_id }
+        });
+    
+        console.log("✅ /match response:", res.data);
+        console.log("🔍 matches:", res.data.matches);
+    
+        const allMatches = res.data?.matches;
+        if (!Array.isArray(allMatches) || allMatches.length === 0) {
+          setMatches([]);
+        } else {
+          const limitedMatches = allMatches.slice(0, 3);
+          setMatches(limitedMatches);
+          childRefs.current = Array(limitedMatches.length)
+            .fill(0)
+            .map(() => React.createRef());
+        }
       } catch (err) {
-        console.error("Failed to fetch matches:", err);
+        console.error("❌ Failed to fetch matches", err);
+      } finally {
+        setLoading(false);
       }
     };
 

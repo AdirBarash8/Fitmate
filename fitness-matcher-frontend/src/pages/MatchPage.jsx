@@ -27,18 +27,14 @@ function MatchPage() {
         const res = await axios.get("/match");
         console.log("✅ /match response:", res.data);
 
-        const allMatches = res.data?.matches;
-        if (!Array.isArray(allMatches) || allMatches.length === 0) {
-          setMatches([]);
-        } else {
-          const limitedMatches = allMatches.slice(0, 3);
-          setMatches(limitedMatches);
-          childRefs.current = Array(limitedMatches.length)
-            .fill(0)
-            .map(() => React.createRef());
-        }
+        const allMatches = res.data?.matches || [];
+        setMatches(allMatches);
+        childRefs.current = Array(allMatches.length)
+          .fill(0)
+          .map(() => React.createRef());
       } catch (err) {
         console.error("❌ Failed to fetch matches", err);
+        setMatches([]);
       } finally {
         setLoading(false);
       }
