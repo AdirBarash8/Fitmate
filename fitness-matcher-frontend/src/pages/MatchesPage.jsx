@@ -40,7 +40,7 @@ const MatchesPage = () => {
           {matches.map((match) => (
             <li key={match.user_id} className="match-card">
               <h3>💬 {match.name || `User #${match.user_id}`}</h3>
-              <p>🎯 Score: {match.score?.toFixed(2)}</p>
+              <p>🎯 Score: {match.score}</p>
               <p>🎂 Age: {match.Age || "Not provided"}</p>
               <p>⚥ Gender: {match.Gender || "Not provided"}</p>
               <p>🏋️ Types: {match.Workout_Type?.join(", ") || "Not provided"}</p>

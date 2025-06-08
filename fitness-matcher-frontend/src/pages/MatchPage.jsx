@@ -121,7 +121,7 @@ function MatchPage() {
                     ? `💬 ${matches[currentIndex].name}`
                     : `User #${matches[currentIndex].user_id}`}
                 </h2>
-                <p>🎯 Match Score: {matches[currentIndex].score?.toFixed(2)}</p>
+                <p>🎯 Match Score: {matches[currentIndex].score}</p>
                 <p>🎂 Age: {matches[currentIndex].Age || "Not provided"}</p>
                 <p>⚥ Gender: {matches[currentIndex].Gender || "Not provided"}</p>
                 <p>
