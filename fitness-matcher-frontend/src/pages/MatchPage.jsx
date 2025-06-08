@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../utils/axiosInstance";
 import TinderCard from "react-tinder-card";
 import { animated, useSpring } from "@react-spring/web";
+import { AuthContext } from "../context/AuthContext";
 import "../styles/MatchPage.css";
 
 function MatchPage() {
+  const { user } = useContext(AuthContext);
   const [matches, setMatches] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isSwiping, setIsSwiping] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState(null);
   const [loading, setLoading] = useState(true);
   const childRefs = useRef([]);
@@ -22,26 +23,31 @@ function MatchPage() {
   }));
 
   useEffect(() => {
+    setMatches([]); // Clear old state
+    setCurrentIndex(0); // Reset index
+    setLoading(true);
+
     async function fetchMatches() {
       try {
-        const res = await axios.get("/match");
+        const res = await axios.get(`/match?user_id=${user.user_id}`);
         console.log("✅ /match response:", res.data);
 
         const allMatches = res.data?.matches || [];
-        setMatches(allMatches);
+        setMatches(allMatches.slice(0, 3));
         childRefs.current = Array(allMatches.length)
           .fill(0)
           .map(() => React.createRef());
       } catch (err) {
         console.error("❌ Failed to fetch matches", err);
-        setMatches([]);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchMatches();
-  }, []);
+    if (user?.user_id) {
+      fetchMatches();
+    }
+  }, [user?.user_id]);
 
   useEffect(() => {
     if (matches.length > 0 && currentIndex >= matches.length) {
@@ -69,18 +75,17 @@ function MatchPage() {
 
     setSwipeDirection(direction);
     setTimeout(() => {
-      setCurrentIndex((prevIndex) => prevIndex + 1);
+      setCurrentIndex((prev) => prev + 1);
       setSwipeDirection(null);
     }, 300);
-    setIsSwiping(false);
-  };
-
-  const scheduleMeeting = (partnerId) => {
-    navigate(`/meetings/new/${partnerId}`);
   };
 
   const onCardRelease = () => {
     api.start({ scale: 1, rotate: 0, opacity: 1 });
+  };
+
+  const scheduleMeeting = (partnerId) => {
+    navigate(`/meetings/new/${partnerId}`);
   };
 
   return (
@@ -124,13 +129,11 @@ function MatchPage() {
                 <p>⚥ Gender: {matches[currentIndex].Gender || "Not provided"}</p>
                 <p>
                   🏋️ Workout Types:{" "}
-                  {matches[currentIndex].Workout_Type?.join(", ") ||
-                    "Not provided"}
+                  {matches[currentIndex].Workout_Type?.join(", ") || "Not provided"}
                 </p>
                 <p>
                   🎯 Goals:{" "}
-                  {matches[currentIndex].Fitness_Goal?.join(", ") ||
-                    "Not provided"}
+                  {matches[currentIndex].Fitness_Goal?.join(", ") || "Not provided"}
                 </p>
                 <p>
                   📍 Location:{" "}
