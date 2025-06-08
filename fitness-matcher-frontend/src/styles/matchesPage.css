@@ -1,51 +1,70 @@
 .matches-page-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 2rem;
-    background: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 300px;
+  max-width: 700px;
+  padding: 2rem;
+  border-radius: 12px;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .matches-page-container h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    font-size: 1.8rem;
-    color: #333;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1e3a8a;
+  margin-bottom: 2rem;
 }
 
 .no-matches-msg {
-    text-align: center;
-    color: #888;
-    font-style: italic;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  font-size: 1.1rem;
+  margin-top: 1rem;
 }
 
 .matches-list {
-    list-style: none;
-    padding: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .match-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 1rem;
-    margin-bottom: 1rem;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.match-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+.match-card span {
+  font-size: 1.1rem;
+  color: #1f2937;
+  font-weight: 500;
 }
 
 .schedule-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .schedule-btn:hover {
-    background-color: #0056b3;
+  background-color: #1e40af;
+  transform: scale(1.05);
 }

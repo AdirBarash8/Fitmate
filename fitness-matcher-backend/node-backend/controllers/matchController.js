@@ -1,66 +1,97 @@
 const { getMatchesFromPython, storeMatchesForUser } = require('../services/matchService');
 const { getCachedMatches, setCachedMatches } = require('../services/matchCacheService');
 const Match = require('../models/match');
+const User = require('../models/user');
  
 exports.getMatchResults = async (req, res) => {
   const userId = req.user.user_id;
   const topN = Number(req.query.top_n || 10);
- 
-  // ✅ Identity Check
+
   if (req.user.user_id !== userId) {
     return res.status(403).json({ error: 'Access denied' });
   }
- 
+
   try {
-    // ✅ Try Redis cache first
     const cached = await getCachedMatches(userId);
-    if (cached) {
-      return res.json({ from_cache: true, ...cached });
+    const result = cached || await getMatchesFromPython(userId, topN);
+
+    if (!cached) {
+      await setCachedMatches(userId, result);
+      await storeMatchesForUser(userId, result.ranks);
     }
- 
-    // 🔁 No cache — get fresh matches from Python
-    const result = await getMatchesFromPython(userId, topN);
- 
-    // ✅ Cache a lightweight version
-    await setCachedMatches(userId, result);
- 
-    // ✅ Save current top matches to Match collection
-    await storeMatchesForUser(userId, result.ranks);
- 
-    res.json({ from_cache: false, ...result });
- 
+
+    // 🔍 Extract user_ids of matches
+    const matchedIds = result.ranks.map(m => m.user_id);
+
+    // 🔍 Get user profiles from DB
+    const users = await User.find({ user_id: { $in: matchedIds } });
+
+    // 🔗 Merge the user info into the matches
+    const enrichedMatches = result.ranks.map(rank => {
+      const user = users.find(u => u.user_id === rank.user_id);
+      return {
+        user_id: rank.user_id,
+        score: rank.score,
+        name: user?.name || null,
+        Age: user?.Age || null,
+        Gender: user?.Gender || null,
+        Workout_Type: user?.Workout_Type || [],
+        Fitness_Goal: user?.Fitness_Goal || [],
+        home_location_label: user?.home_location_label || null
+      };
+    });
+
+    res.json({
+      from_cache: !!cached,
+      matches: enrichedMatches,
+      duration: result.duration
+    });
+
   } catch (error) {
     console.error("Error in getMatchResults:", error);
     res.status(500).json({ error: 'Matching failed' });
   }
 };
  
- 
 exports.getStoredMatches = async (req, res) => {
   const requestedUserId = Number(req.params.user_id);
- 
-  // ✅ Ensure user is fetching their own data
+
   if (req.user.user_id !== requestedUserId) {
     return res.status(403).json({ error: 'Access denied' });
   }
- 
+
   try {
-    const matches = await Match.find({ user_id_1: requestedUserId })
+    const matches = await Match.find({
+      user_id_1: requestedUserId,
+      liked: true
+    })
       .sort({ score: -1 })
       .select({ user_id_2: 1, score: 1, _id: 0 });
- 
+
+    const matchedUserIds = matches.map(m => m.user_id_2);
+
+    const users = await User.find({ user_id: { $in: matchedUserIds } })
+      .select("-password -email -__v -_id"); 
+
+    const fullMatches = matches.map(match => {
+      const userData = users.find(u => u.user_id === match.user_id_2);
+      return {
+        user_id: match.user_id_2,
+        score: match.score,
+        ...userData?._doc
+      };
+    });
+
     res.json({
       user_id: requestedUserId,
-      match_count: matches.length,
-      matches: matches.map(m => ({
-        user_id: m.user_id_2,
-        score: m.score
-      }))
+      match_count: fullMatches.length,
+      matches: fullMatches
     });
+
   } catch (err) {
-    res.status(500).json({ error: 'Failed to retrieve matches', details: err.message });
+    res.status(500).json({ error: 'Failed to retrieve liked matches', details: err.message });
   }
-}
+};
 
 exports.getMatchesByUser = async (req, res) => {
   try {

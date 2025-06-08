@@ -10,34 +10,20 @@ const MatchesPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!user) return;
+
     const fetchMatches = async () => {
       try {
-        const res = await axios.get("/match", {
-          params: { user_id: user.user_id }
-        });
-    
-        console.log("✅ /match response:", res.data);
-        console.log("🔍 matches:", res.data.matches);
-    
-        const allMatches = res.data?.matches;
-        if (!Array.isArray(allMatches) || allMatches.length === 0) {
-          setMatches([]);
-        } else {
-          const limitedMatches = allMatches.slice(0, 3);
-          setMatches(limitedMatches);
-          childRefs.current = Array(limitedMatches.length)
-            .fill(0)
-            .map(() => React.createRef());
-        }
+        const res = await axios.get(`/matches/${user.user_id}`);
+        console.log("✅ Matches response:", res.data.matches);
+        setMatches(res.data.matches || []);
       } catch (err) {
-        console.error("❌ Failed to fetch matches", err);
-      } finally {
-        setLoading(false);
+        console.error("❌ Failed to fetch liked matches", err);
       }
     };
 
     fetchMatches();
-  }, [user.user_id]);
+  }, [user]);
 
   const handleSchedule = (partnerId) => {
     navigate(`/meetings/new/${partnerId}`);
@@ -45,26 +31,26 @@ const MatchesPage = () => {
 
   return (
     <div className="matches-page-container">
-      <h2>🤝 Your Matches</h2>
+      <h2>🤝 Your Liked Matches</h2>
 
       {matches.length === 0 ? (
-        <p className="no-matches-msg">No matches found yet. Go to the Match page to find workout partners!</p>
+        <p className="no-matches-msg">No liked matches yet. Go swipe right on someone!</p>
       ) : (
         <ul className="matches-list">
-          {matches.map((match) => {
-            const partnerId =
-              match.user_id_1 === user.user_id
-                ? match.user_id_2
-                : match.user_id_1;
-            return (
-              <li key={match._id} className="match-card">
-                <span>👤 Matched with user #{partnerId}</span>
-                <button onClick={() => handleSchedule(partnerId)} className="schedule-btn">
-                  📅 Schedule Meeting
-                </button>
-              </li>
-            );
-          })}
+          {matches.map((match) => (
+            <li key={match.user_id} className="match-card">
+              <h3>💬 {match.name || `User #${match.user_id}`}</h3>
+              <p>🎯 Score: {match.score?.toFixed(2)}</p>
+              <p>🎂 Age: {match.Age || "Not provided"}</p>
+              <p>⚥ Gender: {match.Gender || "Not provided"}</p>
+              <p>🏋️ Types: {match.Workout_Type?.join(", ") || "Not provided"}</p>
+              <p>🎯 Goals: {match.Fitness_Goal?.join(", ") || "Not provided"}</p>
+              <p>📍 Location: {match.home_location_label || "Unknown"}</p>
+              <button onClick={() => handleSchedule(match.user_id)} className="schedule-btn">
+                📅 Schedule Meeting
+              </button>
+            </li>
+          ))}
         </ul>
       )}
     </div>

@@ -23,31 +23,26 @@ function MatchPage() {
   }));
 
   useEffect(() => {
-    setMatches([]); // Clear old state
-    setCurrentIndex(0); // Reset index
-    setLoading(true);
+  if (!user) return;
 
-    async function fetchMatches() {
-      try {
-        const res = await axios.get(`/match?user_id=${user.user_id}`);
-        console.log("✅ /match response:", res.data);
-
-        const allMatches = res.data?.matches || [];
-        setMatches(allMatches.slice(0, 3));
-        childRefs.current = Array(allMatches.length)
-          .fill(0)
-          .map(() => React.createRef());
-      } catch (err) {
-        console.error("❌ Failed to fetch matches", err);
-      } finally {
-        setLoading(false);
-      }
+  async function fetchMatches() {
+    try {
+      const res = await axios.get(`/match?user_id=${user.user_id}`);
+      const allMatches = res.data.matches || [];
+      setMatches(allMatches.slice(0, 3));
+      childRefs.current = Array(allMatches.length)
+        .fill(0)
+        .map(() => React.createRef());
+    } catch (err) {
+      console.error("❌ Failed to fetch matches", err);
+    } finally {
+      setLoading(false);
     }
+  }
 
-    if (user?.user_id) {
-      fetchMatches();
-    }
-  }, [user?.user_id]);
+  fetchMatches();
+}, [user]);
+
 
   useEffect(() => {
     if (matches.length > 0 && currentIndex >= matches.length) {
@@ -90,7 +85,7 @@ function MatchPage() {
 
   return (
     <div className="match-page p-6">
-      {loading ? (
+      {loading || !user ? (
         <div className="loading-text">⏳ Loading matches...</div>
       ) : matches.length === 0 ? (
         <div className="no-matches-text">😕 No matches found</div>
