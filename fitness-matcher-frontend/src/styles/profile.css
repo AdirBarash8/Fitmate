@@ -3,9 +3,11 @@
     margin: auto;
     background: #f7f7f7;
     padding: 20px;
+    padding-top: 280px; /* ✅ added padding to account for fixed navbar */
     border-radius: 12px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
 
 .profile-form-container h2 {
     text-align: center;

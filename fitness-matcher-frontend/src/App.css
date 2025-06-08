@@ -40,3 +40,10 @@
 .read-the-docs {
   color: #888;
 }
+
+.page-content {
+  padding-top: 64px; /* or the exact height of your fixed navbar */
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
+}
