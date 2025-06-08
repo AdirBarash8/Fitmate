@@ -1,4 +1,5 @@
 const ExerciseStat = require('../models/exercise');
+const Match = require('../models/match');
 
 async function getDashboardStats(user_id) {
   const pastWeek = new Date();
@@ -11,11 +12,15 @@ async function getDashboardStats(user_id) {
 
   const totalCalories = lastWeekExercises.reduce((sum, entry) => sum + entry.calories, 0);
   const totalMinutes = lastWeekExercises.reduce((sum, entry) => sum + entry.duration, 0);
-
-  const matchesThisWeek = 9; // TODO: Replace with real match count later
+  const matchesTotal = await Match.countDocuments({
+    $or: [
+      { user_id_1: user_id },
+      { user_id_2: user_id }
+    ]
+  });
 
   return {
-    matchesThisWeek,
+    matchesTotal,
     avgWorkoutTime: totalMinutes > 0 ? formatMinutes(totalMinutes / lastWeekExercises.length) : "0m",
     caloriesBurned: totalCalories
   };
