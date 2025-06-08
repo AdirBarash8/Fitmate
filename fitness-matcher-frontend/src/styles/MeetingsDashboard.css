@@ -1,0 +1,185 @@
+/* === Dashboard Layout === */
+.meetings-dashboard {
+    padding: 24px;
+    max-width: 1100px;
+    margin: auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #222;
+}
+
+.meetings-dashboard h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* === Calendar Container === */
+.calendar-container {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 12px;
+    height: 75vh;
+    overflow: hidden;
+}
+
+/* === Calendar Event Styling === */
+.rbc-event {
+    font-weight: 500;
+    font-size: 14px;
+    color: #1e1e1e !important;
+    padding: 4px 6px;
+    border-radius: 4px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Calendar toolbar */
+.rbc-toolbar-label {
+    font-weight: 600;
+    font-size: 18px;
+    color: #333;
+}
+
+.rbc-toolbar button {
+    font-size: 14px;
+    padding: 4px 8px;
+}
+
+/* === Spinner === */
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 160px;
+}
+
+.loading-icon {
+    animation: spin 1s linear infinite;
+    width: 32px;
+    height: 32px;
+    color: #666;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* === Modal Styling === */
+.meeting-modal {
+    padding: 24px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+    max-width: 500px;
+    margin: auto;
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.meeting-details-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.details-section p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.label {
+    font-weight: 600;
+    color: #333;
+    margin-right: 6px;
+}
+
+.value {
+    color: #444;
+}
+
+.status {
+    font-weight: bold;
+}
+
+.status.confirmed {
+    color: #2e7d32;
+}
+
+.status.declined {
+    color: #c62828;
+}
+
+.status.pending {
+    color: #f9a825;
+}
+
+.modal-divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 16px 0;
+}
+
+/* === Response Form === */
+.suggest-form {
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.suggest-form h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #222;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.alt-suggestion {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.alt-suggestion h4 {
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #555;
+}
+
+/* === Responsive Fixes === */
+@media (max-width: 768px) {
+    .calendar-container {
+        padding: 8px;
+        height: 70vh;
+    }
+
+    .rbc-toolbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-content {
+        font-size: 14px;
+    }
+}

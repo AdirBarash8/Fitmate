@@ -1,28 +1,41 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import axios from "../utils/axiosInstance";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter
+  DialogFooter,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader } from "lucide-react";
-import { format } from "date-fns";
+import { format, parseISO, startOfWeek, getDay } from "date-fns";
+import { Calendar, dateFnsLocalizer } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import enUS from "date-fns/locale/en-US";
+import "../styles/MeetingsDashboard.css";
+
+const locales = {
+  "en-US": enUS,
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse: parseISO,
+  startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 0 }),
+  getDay,
+  locales,
+});
 
 const MeetingsDashboard = () => {
   const { user } = useContext(AuthContext);
-  const [activeTab, setActiveTab] = useState("received");
-  const [sentMeetings, setSentMeetings] = useState([]);
-  const [receivedMeetings, setReceivedMeetings] = useState([]);
+  const [meetings, setMeetings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [suggestModalOpen, setSuggestModalOpen] = useState(false);
-  const [selectedMeetingId, setSelectedMeetingId] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [newDate, setNewDate] = useState("");
   const [newPlace, setNewPlace] = useState("");
 
@@ -33,32 +46,25 @@ const MeetingsDashboard = () => {
       setIsLoading(true);
       try {
         const res = await axios.get(`/meetings?user_id=${user.user_id}`);
-        const meetings = res.data.meetings || [];
+        const rawMeetings = res.data.meetings || [];
 
-        const sent = [];
-        const received = [];
-
-        meetings.forEach((m) => {
-          const formatted = {
+        const parsed = rawMeetings.map((m) => {
+          const isSent = m.user_1 === user.user_id;
+          return {
             id: m._id,
-            user_1: m.user_1,
-            user_2: m.user_2,
-            datetime: format(new Date(m.datetime), "yyyy-MM-dd HH:mm"),
+            title: `${isSent ? "To" : "From"}: User #${isSent ? m.user_2 : m.user_1}`,
+            datetime: m.datetime,
+            start: new Date(m.datetime),
+            end: new Date(new Date(m.datetime).getTime() + 60 * 60 * 1000),
             location: m.location,
-            status: m.status
+            status: m.status,
+            type: isSent ? "sent" : "received",
+            user1: m.user_1,
+            user2: m.user_2,
           };
-
-          if (m.user_1 === user.user_id) {
-            formatted.withUser = `User #${m.user_2}`;
-            sent.push(formatted);
-          } else {
-            formatted.fromUser = `User #${m.user_1}`;
-            received.push(formatted);
-          }
         });
 
-        setSentMeetings(sent);
-        setReceivedMeetings(received);
+        setMeetings(parsed);
       } catch (err) {
         console.error("Failed to fetch meetings:", err);
       } finally {
@@ -69,141 +75,145 @@ const MeetingsDashboard = () => {
     fetchMeetings();
   }, [user]);
 
-  const updateStatus = async (meetingId, status) => {
+  const updateStatus = async (id, status) => {
     try {
-      await axios.patch(`/meetings/${meetingId}/status`, { status });
-      setSentMeetings((prev) =>
-        prev.map((m) => (m.id === meetingId ? { ...m, status } : m))
+      await axios.patch(`/meetings/${id}/status`, { status });
+      setMeetings((prev) =>
+        prev.map((m) => (m.id === id ? { ...m, status } : m))
       );
-      setReceivedMeetings((prev) =>
-        prev.map((m) => (m.id === meetingId ? { ...m, status } : m))
-      );
+      setModalOpen(false);
     } catch (err) {
-      console.error(`Failed to update status to "${status}"`, err);
+      console.error("Failed to update status:", err);
     }
   };
 
-  const handleConfirm = (id) => updateStatus(id, "Confirmed");
-  const handleDeny = (id) => updateStatus(id, "Declined");
-
-  const openSuggestModal = (id) => {
-    setSelectedMeetingId(id);
-    setSuggestModalOpen(true);
-  };
-
   const handleSuggestSubmit = () => {
-    console.log("📤 Suggesting new time/location:", {
-      meeting_id: selectedMeetingId,
+    console.log("Suggesting new date/location:", {
+      meeting_id: selectedEvent.id,
       suggested_datetime: newDate,
-      suggested_location: newPlace
+      suggested_location: newPlace,
     });
 
-    // 🔧 Optional: Send this suggestion to backend if desired
-
-    setSuggestModalOpen(false);
+    setModalOpen(false);
     setNewDate("");
     setNewPlace("");
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
+  const eventPropGetter = (event) => {
+    const baseColor = event.type === "sent" ? "#e3f2fd" : "#f3e5f5"; // Light blue or purple
+    let border = "#ccc";
+    let textColor = "#1e1e1e"; // Dark text
+  
+    switch (event.status) {
       case "Confirmed":
-        return "border-green-500";
+        border = "#4caf50"; break;
       case "Declined":
-        return "border-red-500";
-      case "Suggested":
-        return "border-yellow-500";
-      default:
-        return "border-gray-300";
+        border = "#f44336"; break;
+      case "Pending":
+        border = "#ff9800"; break;
     }
+  
+    return {
+      style: {
+        backgroundColor: baseColor,
+        border: `2px solid ${border}`,
+        color: textColor,
+        borderRadius: "6px",
+        padding: "4px",
+      }
+    };
   };
+  
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">📆 My Meetings</h1>
+    <div className="meetings-dashboard">
+      <h1>📅 My Meetings</h1>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-40">
-          <Loader className="animate-spin w-8 h-8 text-gray-500" />
+        <div className="loader-container">
+          <Loader className="loading-icon" />
         </div>
       ) : (
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="sent">Sent</TabsTrigger>
-            <TabsTrigger value="received">Received</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="sent">
-            {sentMeetings.length === 0 ? (
-              <p>No sent meetings.</p>
-            ) : (
-              sentMeetings.map((m) => (
-                <div
-                  key={m.id}
-                  className={`border-2 ${getStatusColor(m.status)} p-3 my-2 rounded`}
-                >
-                  <p><strong>With:</strong> {m.withUser}</p>
-                  <p><strong>Date:</strong> {m.datetime}</p>
-                  <p><strong>Location:</strong> {m.location}</p>
-                  <p><strong>Status:</strong> {m.status}</p>
-                </div>
-              ))
-            )}
-          </TabsContent>
-
-          <TabsContent value="received">
-            {receivedMeetings.length === 0 ? (
-              <p>No received meetings.</p>
-            ) : (
-              receivedMeetings.map((m) => (
-                <div
-                  key={m.id}
-                  className={`border-2 ${getStatusColor(m.status)} p-3 my-2 rounded`}
-                >
-                  <p><strong>From:</strong> {m.fromUser}</p>
-                  <p><strong>Date:</strong> {m.datetime}</p>
-                  <p><strong>Location:</strong> {m.location}</p>
-                  <p><strong>Status:</strong> {m.status}</p>
-
-                  {m.status === "Pending" && (
-                    <div className="flex gap-2 mt-2">
-                      <Button onClick={() => handleConfirm(m.id)}>Confirm</Button>
-                      <Button variant="destructive" onClick={() => handleDeny(m.id)}>Deny</Button>
-                      <Button variant="outline" onClick={() => openSuggestModal(m.id)}>Suggest New</Button>
-                    </div>
-                  )}
-                </div>
-              ))
-            )}
-          </TabsContent>
-        </Tabs>
+        <div className="calendar-container">
+          <Calendar
+            localizer={localizer}
+            events={meetings}
+            startAccessor="start"
+            endAccessor="end"
+            onSelectEvent={(event) => {
+              setSelectedEvent(event);
+              setModalOpen(true);
+            }}
+            eventPropGetter={eventPropGetter}
+            style={{ height: "75vh" }}
+          />
+        </div>
       )}
 
-      {/* Suggest Meeting Modal */}
-      <Dialog open={suggestModalOpen} onOpenChange={setSuggestModalOpen}>
-        <DialogContent>
+      {/* Modal for event details */}
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="meeting-modal">
           <DialogHeader>
-            <DialogTitle>Suggest New Meeting</DialogTitle>
+            <DialogTitle>📄 Meeting Details</DialogTitle>
           </DialogHeader>
 
-          <div className="flex flex-col gap-4">
-            <Input
-              placeholder="New Date & Time (e.g., 2025-06-12 16:00)"
-              value={newDate}
-              onChange={(e) => setNewDate(e.target.value)}
-            />
-            <Input
-              placeholder="New Location"
-              value={newPlace}
-              onChange={(e) => setNewPlace(e.target.value)}
-            />
-          </div>
+          {selectedEvent && (
+            <div className="meeting-details-body">
+              <div className="details-section">
+                <p>
+                  <span className="label">With:</span>
+                  <span className="value">User #{selectedEvent.type === "sent" ? selectedEvent.user2 : selectedEvent.user1}</span>
+                </p>
+                <p>
+                  <span className="label">Date:</span>
+                  <span className="value">{format(new Date(selectedEvent.datetime), "yyyy-MM-dd HH:mm")}</span>
+                </p>
+                <p>
+                  <span className="label">Location:</span>
+                  <span className="value">{selectedEvent.location}</span>
+                </p>
+                <p>
+                  <span className="label">Status:</span>
+                  <span className={`value status ${selectedEvent.status.toLowerCase()}`}>
+                    {selectedEvent.status === "Confirmed" && "✅ "}
+                    {selectedEvent.status === "Declined" && "❌ "}
+                    {selectedEvent.status === "Pending" && "⏳ "}
+                    {selectedEvent.status}
+                  </span>
+                </p>
+              </div>
 
-          <DialogFooter className="mt-4">
-            <Button onClick={handleSuggestSubmit}>Submit Suggestion</Button>
-          </DialogFooter>
+              <hr className="modal-divider" />
+
+              {selectedEvent.type === "received" && selectedEvent.status === "Pending" && (
+                <div className="suggest-form">
+                  <h3>Respond to Meeting</h3>
+                  <div className="button-group">
+                    <Button onClick={() => updateStatus(selectedEvent.id, "Confirmed")}>Confirm</Button>
+                    <Button variant="destructive" onClick={() => updateStatus(selectedEvent.id, "Declined")}>Deny</Button>
+                  </div>
+
+                  <div className="alt-suggestion">
+                    <h4>Suggest Changes</h4>
+                    <Input
+                      placeholder="New Date & Time"
+                      value={newDate}
+                      onChange={(e) => setNewDate(e.target.value)}
+                    />
+                    <Input
+                      placeholder="New Location"
+                      value={newPlace}
+                      onChange={(e) => setNewPlace(e.target.value)}
+                    />
+                    <Button variant="outline" onClick={handleSuggestSubmit}>Suggest New</Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
+
     </div>
   );
 };
