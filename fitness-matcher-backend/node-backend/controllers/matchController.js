@@ -12,13 +12,11 @@ exports.getMatchResults = async (req, res) => {
   }
 
   try {
-    const cached = await getCachedMatches(userId);
-    const result = cached || await getMatchesFromPython(userId, topN);
+    // ❌ No Redis cache — always fetch fresh from Python
+    const result = await getMatchesFromPython(userId, topN);
 
-    if (!cached) {
-      await setCachedMatches(userId, result);
-      await storeMatchesForUser(userId, result.ranks);
-    }
+    // ✅ Save current top matches to DB
+    await storeMatchesForUser(userId, result.ranks);
 
     // 🔍 Extract user_ids of matches
     const matchedIds = result.ranks.map(m => m.user_id);
@@ -26,7 +24,7 @@ exports.getMatchResults = async (req, res) => {
     // 🔍 Get user profiles from DB
     const users = await User.find({ user_id: { $in: matchedIds } });
 
-    // 🔗 Merge the user info into the matches
+    // 🔗 Merge user info into the matches
     const enrichedMatches = result.ranks.map(rank => {
       const user = users.find(u => u.user_id === rank.user_id);
       return {
@@ -42,7 +40,7 @@ exports.getMatchResults = async (req, res) => {
     });
 
     res.json({
-      from_cache: !!cached,
+      from_cache: false,
       matches: enrichedMatches,
       duration: result.duration
     });
@@ -52,6 +50,7 @@ exports.getMatchResults = async (req, res) => {
     res.status(500).json({ error: 'Matching failed' });
   }
 };
+
  
 exports.getStoredMatches = async (req, res) => {
   const requestedUserId = Number(req.params.user_id);
