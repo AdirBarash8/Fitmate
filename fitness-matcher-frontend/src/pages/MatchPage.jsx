@@ -29,7 +29,7 @@ function MatchPage() {
     try {
       const res = await axios.get(`/match?user_id=${user.user_id}`);
       const allMatches = res.data.matches || [];
-      setMatches(allMatches.slice(0, 3));
+      setMatches(allMatches.slice(0, 5));
       childRefs.current = Array(allMatches.length)
         .fill(0)
         .map(() => React.createRef());
@@ -54,26 +54,28 @@ function MatchPage() {
   }, [currentIndex, matches.length, navigate]);
 
   const handleSwipe = async (direction) => {
-    const currentMatch = matches[currentIndex];
-    console.log(`You swiped ${direction} on user ${currentMatch.user_id}`);
+  const currentMatch = matches[currentIndex];
+  const liked = direction === "right";
 
-    if (direction === "right") {
-      try {
-        await axios.patch("/matches/like", {
-          user_id_2: currentMatch.user_id,
-        });
-        console.log("👍 Liked user saved to DB");
-      } catch (err) {
-        console.warn("❌ Failed to save liked user:", err.message);
-      }
-    }
+  console.log(`You swiped ${direction} on user ${currentMatch.user_id}`);
 
-    setSwipeDirection(direction);
-    setTimeout(() => {
-      setCurrentIndex((prev) => prev + 1);
-      setSwipeDirection(null);
-    }, 300);
-  };
+  try {
+    await axios.patch("/matches/like", {
+      user_id_2: currentMatch.user_id,
+      liked, // send true or false
+    });
+    console.log(`📝 Match marked as ${liked ? "liked ✅" : "not liked ❌"}`);
+  } catch (err) {
+    console.warn("❌ Failed to update match like status:", err.message);
+  }
+
+  setSwipeDirection(direction);
+  setTimeout(() => {
+    setCurrentIndex((prev) => prev + 1);
+    setSwipeDirection(null);
+  }, 300);
+};
+
 
   const onCardRelease = () => {
     api.start({ scale: 1, rotate: 0, opacity: 1 });

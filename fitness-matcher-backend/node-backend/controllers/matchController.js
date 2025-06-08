@@ -109,24 +109,25 @@ exports.getMatchesByUser = async (req, res) => {
 exports.markAsLiked = async (req, res) => {
   const user_id_1 = req.user.user_id;
   const user_id_2 = req.body.user_id_2;
+  const liked = req.body.liked;
 
-  if (!user_id_2) {
-    return res.status(400).json({ error: "Missing user_id_2" });
+  if (!user_id_2 || typeof liked !== 'boolean') {
+    return res.status(400).json({ error: "Missing user_id_2 or liked value" });
   }
 
   try {
     const result = await Match.updateOne(
       { user_id_1, user_id_2 },
-      { $set: { liked: true, last_updated: new Date() } }
+      { $set: { liked, last_updated: new Date() } }
     );
 
     if (result.matchedCount === 0) {
       return res.status(404).json({ error: "Match not found" });
     }
 
-    res.json({ message: "Match marked as liked ✅" });
+    res.json({ message: `Match marked as ${liked ? 'liked' : 'not liked'} ✅` });
   } catch (err) {
-    console.error("Error marking as liked:", err.message);
-    res.status(500).json({ error: "Failed to mark as liked" });
+    console.error("Error updating like status:", err.message);
+    res.status(500).json({ error: "Failed to update like status" });
   }
 };
