@@ -9,7 +9,7 @@ const DashboardPage = () => {
   const navigate = useNavigate();
 
   const [stats, setStats] = useState({
-    matchesThisWeek: 0,
+    matchesTotal: 0,
     avgWorkoutTime: "0m",
     caloriesBurned: 0,
   });
@@ -38,8 +38,8 @@ const DashboardPage = () => {
 
       <div className="info-cards">
         <div className="info-card">
-          <p className="card-title">❤️ Matches This Week</p>
-          <p className="card-value">{stats.matchesThisWeek}</p>
+          <p className="card-title">❤️ Matches</p>
+          <p className="card-value">{stats.matchesTotal}</p>
         </div>
         <div className="info-card">
           <p className="card-title">⏱ Avg Workout Time</p>
@@ -64,8 +64,8 @@ const DashboardPage = () => {
         <button className="dashboard-button" onClick={() => handleNavigate("/profile")}>
           👤 Profile
         </button>
-        <button className="dashboard-button" onClick={() => handleNavigate("/update-location")}>
-          📍 Location
+        <button className="dashboard-button" onClick={() => handleNavigate("/location")}>
+          📍 Live Location
         </button>
         <button className="dashboard-button" onClick={() => handleNavigate("/exercises/new")}>
           🏃‍♀️ Add Exercise

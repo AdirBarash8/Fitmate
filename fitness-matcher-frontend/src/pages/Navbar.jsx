@@ -24,7 +24,7 @@ const Navbar = () => {
     <a href="/match">Match</a>
     <a href="/profile">Profile</a>
     <a href="/meetings">Meetings</a>
-    <a href="/exercises/add">Add Exercise</a>
+    <a href="/exercises/new">Add Exercise</a>
     <button onClick={logout}>Logout</button>
   </div>
 </nav>
