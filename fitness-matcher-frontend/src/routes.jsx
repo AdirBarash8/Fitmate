@@ -13,6 +13,7 @@ import ScheduleMeetingPage from "./pages/ScheduleMeetingPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminPanel from "./pages/AdminPanel";
 import AddExercisePage from "./pages/AddExercisePage";
+import Layout from "./pages/Layout";
 
 function AppRoutes() {
   return (
@@ -26,6 +27,7 @@ function AppRoutes() {
           <Route path="/register" element={<RegisterPage />} />
 
           {/* Protected Routes */}
+          <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route
             path="/dashboard"
             element={
@@ -90,6 +92,7 @@ function AppRoutes() {
               </ProtectedRoute>
             }
           />
+          </Route>
 
           {/* Catch-all for undefined routes */}
           <Route path="*" element={<div>404 - Page Not Found</div>} />
