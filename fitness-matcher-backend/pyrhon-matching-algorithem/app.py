@@ -33,23 +33,23 @@ def match_users():
         user_id = int(user_id)
         top_n = int(top_n)
 
-        #all_users = get_users_from_db()
         current_user = get_user_by_id(user_id)
         if not current_user:
             return jsonify({"error": "User not found"}), 404
 
-        # Only fetch potential match candidates based on preferences
+        # Filtered potential matches
         filtered_others = get_filtered_users_for_matching(current_user)
-        all_users = [current_user] + filtered_others  # 👈 Add user to list
+        all_users = [current_user] + filtered_others
+
         matches = find_hybrid_matches(user_id, all_users)
-        
         user_dict = {user["user_id"]: user for user in all_users}
-        enriched = []
+
+        enriched_matches = []
         ranked_overview = []
 
-        for idx, match in enumerate(matches):
-            profile = user_dict.get(match["user_id"])
-            enriched.append({
+        for idx, match in enumerate(matches[:top_n]):
+            profile = user_dict.get(match["user_id"], {})
+            combined = {
                 "rank": idx + 1,
                 "user_id": match["user_id"],
                 "score": match["hybrid_score"],
@@ -58,8 +58,10 @@ def match_users():
                 "days_overlap": match.get("days_overlap"),
                 "gender_match": match.get("gender_match"),
                 "age_match": match.get("age_match"),
-                "profile": profile
-            })
+                # Flattened user profile info (optional: exclude sensitive fields)
+                **{k: v for k, v in profile.items() if k != "password"}
+            }
+            enriched_matches.append(combined)
 
             ranked_overview.append({
                 "rank": idx + 1,
@@ -71,16 +73,16 @@ def match_users():
         response["summary"] = {
             "user_id": user_id,
             "top_n": top_n,
-            "total_matches": len(enriched)
+            "total_matches": len(enriched_matches)
         }
         response["ranks"] = ranked_overview
-        response["matches"] = enriched
-
+        response["matches"] = enriched_matches
 
         return jsonify(response)
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)

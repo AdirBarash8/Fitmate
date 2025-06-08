@@ -10,8 +10,8 @@ function MatchPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState(null);
+  const [loading, setLoading] = useState(true);
   const childRefs = useRef([]);
-
   const navigate = useNavigate();
 
   const [{ scale, rotate, opacity }, api] = useSpring(() => ({
@@ -25,19 +25,28 @@ function MatchPage() {
     async function fetchMatches() {
       try {
         const res = await axios.get("/match");
-        const limitedMatches = res.data.ranks.slice(0, 3);
-        setMatches(limitedMatches);
-        childRefs.current = Array(limitedMatches.length)
-          .fill(0)
-          .map(() => React.createRef());
+        console.log("✅ /match response:", res.data);
+
+        const allMatches = res.data?.matches;
+        if (!Array.isArray(allMatches) || allMatches.length === 0) {
+          setMatches([]);
+        } else {
+          const limitedMatches = allMatches.slice(0, 3);
+          setMatches(limitedMatches);
+          childRefs.current = Array(limitedMatches.length)
+            .fill(0)
+            .map(() => React.createRef());
+        }
       } catch (err) {
-        console.error("Failed to fetch matches", err);
+        console.error("❌ Failed to fetch matches", err);
+      } finally {
+        setLoading(false);
       }
     }
+
     fetchMatches();
   }, []);
 
-  // ✅ Redirect to dashboard when no matches left
   useEffect(() => {
     if (matches.length > 0 && currentIndex >= matches.length) {
       const timeout = setTimeout(() => {
@@ -47,12 +56,21 @@ function MatchPage() {
     }
   }, [currentIndex, matches.length, navigate]);
 
-  const handleSwipe = (direction, match) => {
-    console.log(`You swiped ${direction} on user ${match.user_id}`);
+  const handleSwipe = async (direction) => {
+    const currentMatch = matches[currentIndex];
+    console.log(`You swiped ${direction} on user ${currentMatch.user_id}`);
+
     if (direction === "right") {
-      // ✅ Don't auto-navigate — just log "liked"
-      console.log("Liked user", match.user_id);
+      try {
+        await axios.patch("/matches/like", {
+          user_id_2: currentMatch.user_id,
+        });
+        console.log("👍 Liked user saved to DB");
+      } catch (err) {
+        console.warn("❌ Failed to save liked user:", err.message);
+      }
     }
+
     setSwipeDirection(direction);
     setTimeout(() => {
       setCurrentIndex((prevIndex) => prevIndex + 1);
@@ -71,16 +89,18 @@ function MatchPage() {
 
   return (
     <div className="match-page p-6">
-      {matches.length === 0 ? (
-        <div className="loading-text">טוען התאמות...</div>
+      {loading ? (
+        <div className="loading-text">⏳ Loading matches...</div>
+      ) : matches.length === 0 ? (
+        <div className="no-matches-text">😕 No matches found</div>
       ) : currentIndex >= matches.length ? (
-        <div className="no-matches-text">אין עוד התאמות להציג 🎉</div>
+        <div className="no-matches-text">🎉 No more matches to display</div>
       ) : (
         <>
           <div className="card-container">
             <TinderCard
               key={matches[currentIndex].user_id}
-              onSwipe={(dir) => handleSwipe(dir, matches[currentIndex])}
+              onSwipe={(dir) => handleSwipe(dir)}
               onCardLeftScreen={onCardRelease}
               preventSwipe={["up", "down"]}
               swipeRequirementType="position"
@@ -92,26 +112,47 @@ function MatchPage() {
                 className="match-card"
               >
                 {swipeDirection === "right" && (
-                  <div className="swipe-indicator like">אהבתי 💚</div>
+                  <div className="swipe-indicator like">Liked 💚</div>
                 )}
                 {swipeDirection === "left" && (
-                  <div className="swipe-indicator nope">דילגתי ❌</div>
+                  <div className="swipe-indicator nope">Skipped ❌</div>
                 )}
-                <h2>משתמש {matches[currentIndex].user_id}</h2>
-                <p>ציון התאמה: {matches[currentIndex].score}</p>
+
+                <h2>
+                  {matches[currentIndex].name
+                    ? `💬 ${matches[currentIndex].name}`
+                    : `User #${matches[currentIndex].user_id}`}
+                </h2>
+                <p>🎯 Match Score: {matches[currentIndex].score?.toFixed(2)}</p>
+                <p>🎂 Age: {matches[currentIndex].Age || "Not provided"}</p>
+                <p>⚥ Gender: {matches[currentIndex].Gender || "Not provided"}</p>
+                <p>
+                  🏋️ Workout Types:{" "}
+                  {matches[currentIndex].Workout_Type?.join(", ") ||
+                    "Not provided"}
+                </p>
+                <p>
+                  🎯 Goals:{" "}
+                  {matches[currentIndex].Fitness_Goal?.join(", ") ||
+                    "Not provided"}
+                </p>
+                <p>
+                  📍 Location:{" "}
+                  {matches[currentIndex].home_location_label || "Unknown"}
+                </p>
               </animated.div>
             </TinderCard>
           </div>
 
           <div className="buttons-container">
             <button
-              onClick={() => handleSwipe("left", matches[currentIndex])}
+              onClick={() => handleSwipe("left")}
               className="action-button nope-button"
             >
               ❌
             </button>
             <button
-              onClick={() => handleSwipe("right", matches[currentIndex])}
+              onClick={() => handleSwipe("right")}
               className="action-button like-button"
             >
               💚
@@ -120,10 +161,12 @@ function MatchPage() {
 
           <div className="schedule-later-container">
             <button
-              onClick={() => scheduleMeeting(matches[currentIndex].user_id)}
+              onClick={() =>
+                scheduleMeeting(matches[currentIndex].user_id)
+              }
               className="schedule-button"
             >
-              📅 קבע פגישה עם משתמש {matches[currentIndex].user_id}
+              📅 Schedule a Meeting with User {matches[currentIndex].user_id}
             </button>
           </div>
         </>

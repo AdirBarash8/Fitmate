@@ -75,4 +75,27 @@ exports.getMatchesByUser = async (req, res) => {
   }
 };
 
-  
+exports.markAsLiked = async (req, res) => {
+  const { user_id_2, liked } = req.body;
+  const user_id_1 = req.user.user_id;
+
+  if (!user_id_2) {
+    return res.status(400).json({ error: "Missing user_id_2" });
+  }
+
+  try {
+    const updated = await Match.findOneAndUpdate(
+      { user_id_1, user_id_2 },
+      { $set: { liked: !!liked, last_updated: new Date() } },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ error: "Match not found" });
+    }
+
+    res.json({ message: "Like status updated", match: updated });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update like status", details: err.message });
+  }
+};
