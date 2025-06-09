@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { ForumProvider } from "./context/ForumContext";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
@@ -15,99 +17,111 @@ import AdminPanel from "./pages/AdminPanel";
 import AddExercisePage from "./pages/AddExercisePage";
 import Layout from "./pages/Layout";
 import LocationPage from "./pages/LocationPage";
+import ForumPage from "./pages/ForumPage";
+
 
 function AppRoutes() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
+      <ForumProvider>
+        <Router>
+          <Routes>
 
-          {/* Public Routes */}
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+            {/* Public Routes */}
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
-          {/* Protected Routes */}
-          <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/match"
-            element={
-              <ProtectedRoute>
-                <MatchPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/matches"
-            element={
-              <ProtectedRoute>
-                <MatchesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/meetings"
-            element={
-              <ProtectedRoute>
-                <MeetingsDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/meetings/new/:partnerId"
-            element={
-              <ProtectedRoute>
-                <ScheduleMeetingPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <AdminPanel />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/exercises/new"
-            element={
-              <ProtectedRoute>
-                <AddExercisePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/location"
-            element={
-              <ProtectedRoute>
-                <LocationPage />
-              </ProtectedRoute>
-            }
-          />
-          </Route>
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/match"
+              element={
+                <ProtectedRoute>
+                  <MatchPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/matches"
+              element={
+                <ProtectedRoute>
+                  <MatchesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/meetings"
+              element={
+                <ProtectedRoute>
+                  <MeetingsDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/meetings/new/:partnerId"
+              element={
+                <ProtectedRoute>
+                  <ScheduleMeetingPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminPanel />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/exercises/new"
+              element={
+                <ProtectedRoute>
+                  <AddExercisePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/location"
+              element={
+                <ProtectedRoute>
+                  <LocationPage />
+                </ProtectedRoute>
+              }
+            />
+            </Route>
+            <Route
+              path="/forum"
+              element={
+                <ProtectedRoute>
+                  <ForumPage />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Catch-all for undefined routes */}
-          <Route path="*" element={<div>404 - Page Not Found</div>} />
-          
-        </Routes>
-      </Router>
+            {/* Catch-all for undefined routes */}
+            <Route path="*" element={<div>404 - Page Not Found</div>} />
+            
+          </Routes>
+        </Router>
+      </ForumProvider>
     </AuthProvider>
   );
 }

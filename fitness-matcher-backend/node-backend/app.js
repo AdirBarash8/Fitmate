@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const meetingRoutes = require('./routes/meetingRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const exerciseRoutes = require('./routes/exerciseRoutes');
+const forumRoutes = require('./routes/forumRoutes');
 
 require('dotenv').config();
 
@@ -39,6 +40,8 @@ app.use('/api', authRoutes);
 app.use('/api', meetingRoutes);
 app.use('/api', dashboardRoutes);
 app.use('/api', exerciseRoutes);
+app.use('/api/forum', forumRoutes);
+
 
 // Start server
 const PORT = process.env.PORT || 3000;

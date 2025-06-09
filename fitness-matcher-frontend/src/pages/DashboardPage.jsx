@@ -70,6 +70,9 @@ const DashboardPage = () => {
         <button className="dashboard-button" onClick={() => handleNavigate("/exercises/new")}>
           🏃‍♀️ Add Exercise
         </button>
+        <button className="dashboard-button" onClick={() => handleNavigate("/forum")}>
+          💬 Forum
+        </button>
         <button className="dashboard-button logout" onClick={logout}>
           🚪 Logout
         </button>
