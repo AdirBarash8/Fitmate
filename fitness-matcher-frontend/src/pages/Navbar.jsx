@@ -25,6 +25,7 @@ const Navbar = () => {
     <a href="/profile">Profile</a>
     <a href="/meetings">Meetings</a>
     <a href="/exercises/new">Add Exercise</a>
+    <a href="/forum">Forum</a>
     <button onClick={logout}>Logout</button>
   </div>
 </nav>
