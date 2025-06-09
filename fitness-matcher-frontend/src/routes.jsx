@@ -106,7 +106,6 @@ function AppRoutes() {
                 </ProtectedRoute>
               }
             />
-            </Route>
             <Route
               path="/forum"
               element={
@@ -115,7 +114,7 @@ function AppRoutes() {
                 </ProtectedRoute>
               }
             />
-
+            </Route>
             {/* Catch-all for undefined routes */}
             <Route path="*" element={<div>404 - Page Not Found</div>} />
             
