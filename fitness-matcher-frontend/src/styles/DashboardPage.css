@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #f8fafc;
 }
 
 .dashboard-title {
@@ -37,6 +38,13 @@
   width: 200px;
   text-align: center;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.info-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .card-title {
@@ -48,7 +56,7 @@
 .card-value {
   font-size: 1.8rem;
   font-weight: bold;
-  color: #0f172a;
+  color: #0ea5e9;
 }
 
 .dashboard-buttons {
@@ -59,7 +67,7 @@
 }
 
 .dashboard-button {
-  background-color: #3b82f6;
+  background: linear-gradient(135deg, #0ea5e9, #3b82f6);
   color: white;
   border: none;
   border-radius: 9999px;
@@ -68,18 +76,23 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.25s ease, transform 0.2s ease;
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
 }
 
 .dashboard-button:hover {
-  background-color: #2563eb;
+  background: #2563eb;
   transform: scale(1.05);
 }
 
+.dashboard-button:active {
+  transform: scale(0.95);
+}
+
 .dashboard-button.logout {
-  background-color: #ef4444;
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
 }
 
 .dashboard-button.logout:hover {
-  background-color: #dc2626;
+  background: #dc2626;
 }
