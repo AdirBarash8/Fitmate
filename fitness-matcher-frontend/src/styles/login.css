@@ -121,33 +121,34 @@ body {
 
 /* Shared style for both buttons */
 .secondary-button {
-  flex: 1 1 0;
-  min-width: 140px;
-  padding: 14px;
-  background: white;
-  color: #6366f1;
-  border: 2px solid #6366f1;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: background 0.3s, color 0.3s, transform 0.2s;
-  box-sizing: border-box;
+  margin-top: 0 !important;
+  flex: 1 1 0 !important;
+  min-width: 140px !important;
+  padding: 14px !important;
+  background: white !important;
+  color: #6366f1 !important;
+  border: 2px solid #6366f1 !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transition: background 0.3s, color 0.3s, transform 0.2s !important;
+  box-sizing: border-box !important;
 }
 
 .secondary-button:hover {
-  background: #6366f1;
-  color: white;
-  transform: translateY(-1px);
+  background: #6366f1 !important;
+  color: white !important;
+  transform: translateY(-1px) !important;
 }
 
 .secondary-button:disabled {
-  background: #f1f5f9;
-  color: #94a3b8;
-  border-color: #94a3b8;
-  cursor: not-allowed;
+  background: #f1f5f9 !important;
+  color: #94a3b8 !important;
+  border-color: #94a3b8 !important;
+  cursor: not-allowed !important;
 }

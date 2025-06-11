@@ -1,40 +1,94 @@
-.forum-container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
+/* Forum Container */
+.forum-page {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 3rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
-.new-post-form textarea {
+/* Header */
+.forum-page h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.75rem;
+  color: #333;
+}
+
+/* New Post Section */
+.new-post {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.new-post textarea {
   width: 100%;
-  height: 80px;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
+  min-height: 100px;
+  padding: 0.75rem;
   font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
+  transition: border-color 0.2s ease;
 }
 
-.new-post-form button {
-  padding: 0.5rem 1rem;
+.new-post textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* Buttons */
+.new-post button,
+.post button {
   background-color: #2563eb;
   color: white;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.post-list {
-  list-style: none;
-  padding: 0;
-}
-
-.post-item {
-  background: #f9f9f9;
-  padding: 1rem;
-  margin-bottom: 1rem;
   border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.post-footer {
+.new-post button:disabled,
+.post button:disabled {
+  background-color: #9aa3b0;
+  cursor: not-allowed;
+}
+
+.new-post button:hover:not(:disabled),
+.post button:hover:not(:disabled) {
+  background-color: #1e48c4;
+}
+
+/* Post Section */
+.posts {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.post {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.post p {
+  margin: 0 0 0.75rem;
+  line-height: 1.5;
+  color: #444;
+}
+
+.post strong {
+  color: #222;
+}
+
+.post button {
+  align-self: flex-start;
 }
